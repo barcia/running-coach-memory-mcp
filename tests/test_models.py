@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from memory_mcp.models import AthleteStatus, Memory, Plan
+from memory_mcp.models import Memory, Plan
 
 RFC3339_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$")
 
@@ -94,33 +94,6 @@ class TestMemoryDatetimeSerialization:
         )
         data = json.loads(memory.model_dump_json())
         assert is_rfc3339(data["created_at"]), f"Not RFC 3339: {data['created_at']}"
-
-
-class TestAthleteStatusSerialization:
-    """AthleteStatus with mixed naive/aware datetimes must serialize as valid RFC 3339."""
-
-    def test_mixed_datetimes(self):
-        status = AthleteStatus(
-            past_plans=[
-                Plan(id=1, created_at="2026-01-30T01:26:29Z", planned_at="2026-02-15", description="P1", status="completed"),
-                Plan(id=2, created_at="2026-02-06T19:19:07", planned_at="2026-02-16", description="P2", status="pending"),
-            ],
-            upcoming_plans=[
-                Plan(id=3, created_at="2026-02-06T19:19:11", planned_at="2026-02-18", description="P3", status="pending"),
-            ],
-            recent_memories=[
-                Memory(id=1, created_at="2026-02-06T19:19:07", author="agent", content="M1"),
-                Memory(id=2, created_at="2026-01-30T01:05:31Z", author="user", content="M2"),
-            ],
-        )
-
-        data = json.loads(status.model_dump_json())
-
-        for plan in data["past_plans"] + data["upcoming_plans"]:
-            assert is_rfc3339(plan["created_at"]), f"Plan not RFC 3339: {plan['created_at']}"
-
-        for mem in data["recent_memories"]:
-            assert is_rfc3339(mem["created_at"]), f"Memory not RFC 3339: {mem['created_at']}"
 
 
 class TestDatabaseRoundtrip:

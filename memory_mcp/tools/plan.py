@@ -3,6 +3,7 @@
 import sqlite3
 from datetime import date, timedelta
 
+from memory_mcp.csv_utils import PLAN_CSV_FIELDS, models_to_csv
 from memory_mcp.models import Plan, PlanUpdate
 
 
@@ -62,8 +63,8 @@ def list_plans(
     end_date: str | None = None,
     status: str | None = None,
     limit: int = 50,
-) -> list[Plan]:
-    """List plans with optional filters."""
+) -> str:
+    """List plans with optional filters. Returns CSV."""
     query = "SELECT id, created_at, planned_at, description, notes, status, activity_id FROM plan WHERE 1=1"
     params: list = []
 
@@ -84,7 +85,7 @@ def list_plans(
 
     rows = conn.execute(query, params).fetchall()
 
-    return [
+    plans = [
         Plan(
             id=row["id"],
             created_at=row["created_at"],
@@ -97,15 +98,17 @@ def list_plans(
         for row in rows
     ]
 
+    return models_to_csv(plans, PLAN_CSV_FIELDS)
 
-def get_today_plan(conn: sqlite3.Connection) -> list[Plan]:
-    """Get plans for today."""
+
+def get_today_plan(conn: sqlite3.Connection) -> str:
+    """Get plans for today. Returns CSV."""
     today = date.today().isoformat()
     return list_plans(conn, start_date=today, end_date=today)
 
 
-def get_upcoming_plans(conn: sqlite3.Connection, days: int = 7) -> list[Plan]:
-    """Get plans for the next N days."""
+def get_upcoming_plans(conn: sqlite3.Connection, days: int = 7) -> str:
+    """Get plans for the next N days. Returns CSV."""
     today = date.today()
     end = today + timedelta(days=days)
     return list_plans(conn, start_date=today.isoformat(), end_date=end.isoformat())

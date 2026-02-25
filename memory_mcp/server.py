@@ -8,15 +8,12 @@ from memory_mcp.config import get_settings
 from memory_mcp.database import get_connection, init_database
 from memory_mcp.logging import setup_logging
 from memory_mcp.models import (
-    AthleteStatus,
     Memory,
-    MemorySearchResult,
     Plan,
     PlanUpdate,
 )
 from memory_mcp.tools import memory as memory_tools
 from memory_mcp.tools import plan as plan_tools
-from memory_mcp.tools import status as status_tools
 
 # Initialize settings, logging, and database
 settings = get_settings()
@@ -30,30 +27,11 @@ mcp = FastMCP(
         "Persistent memory and training plan management for an AI running coach. "
         "Two data domains: Plans (scheduled workouts with status lifecycle: pending → completed/skipped/cancelled) "
         "and Memory (semantic long-term storage of coaching insights, athlete observations, and decisions). "
-        "Start every session with get_athlete_status(). Use search_memories() before asking the athlete "
-        "something you might already know."
+        "Start every session with list_plans() and list_memories(limit=20) in parallel. "
+        "Use search_memories() before asking the athlete something you might already know. "
+        "List and search tools return CSV format."
     ),
 )
-
-
-# =============================================================================
-# Status Tool
-# =============================================================================
-
-
-@mcp.tool()
-def get_athlete_status() -> AthleteStatus:
-    """Get a snapshot of the athlete's current training situation.
-
-    Use at the START of every coaching session to load context.
-    Returns: last 5 past plans, next 5 upcoming plans, and 20 most recent memories.
-    This single call replaces multiple queries when you need a quick overview.
-    """
-    conn = get_connection(settings)
-    try:
-        return status_tools.get_athlete_status(conn)
-    finally:
-        conn.close()
 
 
 # =============================================================================
@@ -104,8 +82,8 @@ def get_memory(memory_id: int) -> Memory | None:
 def list_memories(
     author: Literal["user", "agent", "system"] | None = None,
     limit: int = 50,
-) -> list[Memory]:
-    """List memories in reverse chronological order (newest first).
+) -> str:
+    """List memories in reverse chronological order (newest first). Returns CSV (id,created_at,author,content).
 
     Use for browsing recent activity or auditing memories by author.
     For finding memories by topic, prefer search_memories() which uses semantic similarity.
@@ -122,8 +100,8 @@ def list_memories(
 
 
 @mcp.tool()
-def search_memories(query: str, limit: int = 10) -> list[MemorySearchResult]:
-    """Find memories by meaning using semantic vector search.
+def search_memories(query: str, limit: int = 10) -> str:
+    """Find memories by meaning using semantic vector search. Returns CSV (id,created_at,author,content,distance).
 
     This is the PRIMARY way to retrieve memories — use natural language queries
     (e.g., "knee injury history", "preferred long run day"). Results are ranked
@@ -205,8 +183,8 @@ def list_plans(
     end_date: str | None = None,
     status: str | None = None,
     limit: int = 50,
-) -> list[Plan]:
-    """Query plans with optional date range and status filters. Ordered by date ascending.
+) -> str:
+    """Query plans with optional date range and status filters. Returns CSV (id,planned_at,description,notes,status,activity_id).
 
     Use for reviewing training blocks, checking compliance (e.g., all "skipped" plans
     in the last month), or finding plans for a specific date range.
@@ -225,8 +203,8 @@ def list_plans(
 
 
 @mcp.tool()
-def get_today_plan() -> list[Plan]:
-    """Get all plans scheduled for today, regardless of status.
+def get_today_plan() -> str:
+    """Get all plans scheduled for today, regardless of status. Returns CSV (id,planned_at,description,notes,status,activity_id).
 
     Use when the athlete asks "what's my workout today?" or when giving
     post-workout feedback to find the planned session for comparison.
@@ -239,8 +217,8 @@ def get_today_plan() -> list[Plan]:
 
 
 @mcp.tool()
-def get_upcoming_plans(days: int = 7) -> list[Plan]:
-    """Get plans from today through the next N days.
+def get_upcoming_plans(days: int = 7) -> str:
+    """Get plans from today through the next N days. Returns CSV (id,planned_at,description,notes,status,activity_id).
 
     Use to preview the upcoming training load, check what's scheduled
     for the week, or review the short-term plan with the athlete.

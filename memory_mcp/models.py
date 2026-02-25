@@ -103,12 +103,3 @@ class Plan(PlanBase):
     @classmethod
     def validate_created_at(cls, v: datetime) -> datetime:
         return ensure_utc(v)
-
-
-# Status Models
-class AthleteStatus(BaseModel):
-    """Aggregated athlete status."""
-
-    past_plans: list[Plan] = Field(default_factory=list)
-    upcoming_plans: list[Plan] = Field(default_factory=list)
-    recent_memories: list[Memory] = Field(default_factory=list)

@@ -1,6 +1,6 @@
 [project]
 name = "running-coach-memory-mcp"
-version = "1.0.0"
+version = "1.1.0"
 description = "Memory and Training Plan MCP for an AI running coach agent"
 readme = "README.md"
 requires-python = ">=3.12"

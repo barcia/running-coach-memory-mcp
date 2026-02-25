@@ -4,6 +4,7 @@ import sqlite3
 from typing import Literal
 
 from memory_mcp.config import Settings
+from memory_mcp.csv_utils import MEMORY_CSV_FIELDS, MEMORY_SEARCH_CSV_FIELDS, models_to_csv
 from memory_mcp.embeddings import create_embedding, get_embedding_client, serialize_embedding
 from memory_mcp.models import Memory, MemorySearchResult
 
@@ -70,8 +71,8 @@ def list_memories(
     conn: sqlite3.Connection,
     author: Literal["user", "agent", "system"] | None = None,
     limit: int = 50,
-) -> list[Memory]:
-    """List memories with optional author filter."""
+) -> str:
+    """List memories with optional author filter. Returns CSV."""
     if author:
         rows = conn.execute(
             "SELECT id, created_at, author, content FROM memory WHERE author = ? ORDER BY created_at DESC LIMIT ?",
@@ -83,7 +84,7 @@ def list_memories(
             (limit,),
         ).fetchall()
 
-    return [
+    memories = [
         Memory(
             id=row["id"],
             created_at=row["created_at"],
@@ -93,14 +94,16 @@ def list_memories(
         for row in rows
     ]
 
+    return models_to_csv(memories, MEMORY_CSV_FIELDS)
+
 
 def search_memories(
     conn: sqlite3.Connection,
     settings: Settings,
     query: str,
     limit: int = 10,
-) -> list[MemorySearchResult]:
-    """Search memories by semantic similarity."""
+) -> str:
+    """Search memories by semantic similarity. Returns CSV."""
     # Generate query embedding
     client = get_embedding_client(settings)
     query_embedding = create_embedding(client, query, settings.embedding_model)
@@ -123,7 +126,7 @@ def search_memories(
         (query_bytes, limit),
     ).fetchall()
 
-    return [
+    results = [
         MemorySearchResult(
             id=row["id"],
             created_at=row["created_at"],
@@ -133,6 +136,8 @@ def search_memories(
         )
         for row in rows
     ]
+
+    return models_to_csv(results, MEMORY_SEARCH_CSV_FIELDS)
 
 
 def delete_memory(conn: sqlite3.Connection, memory_id: int) -> bool:

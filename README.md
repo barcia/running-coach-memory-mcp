@@ -89,33 +89,29 @@ npx @modelcontextprotocol/inspector uv run running-coach-memory-mcp
 
 ## Available Tools
 
-### Status
-
-| Tool | Description |
-|------|-------------|
-| `get_athlete_status` | Snapshot of current training situation: last 5 past plans, next 5 upcoming plans, and 20 most recent memories. Use at the start of every session. |
+List and search tools return **CSV** format for token efficiency. Single-record tools return JSON.
 
 ### Memory
 
-| Tool | Parameters | Description |
-|------|------------|-------------|
-| `add_memory` | `author`, `content` | Store a coaching insight with automatic embedding generation. |
-| `search_memories` | `query`, `limit?` | Semantic vector search. Find memories by meaning, not exact text. |
-| `list_memories` | `author?`, `limit?` | List memories in reverse chronological order. |
-| `get_memory` | `memory_id` | Retrieve a single memory by ID. |
-| `delete_memory` | `memory_id` | Permanently delete a memory and its embedding. |
+| Tool | Parameters | Returns | Description |
+|------|------------|---------|-------------|
+| `add_memory` | `author`, `content` | JSON (Memory) | Store a coaching insight with automatic embedding generation. |
+| `search_memories` | `query`, `limit?` | CSV (`id,created_at,author,content,distance`) | Semantic vector search. |
+| `list_memories` | `author?`, `limit?` | CSV (`id,created_at,author,content`) | List memories in reverse chronological order. |
+| `get_memory` | `memory_id` | JSON (Memory) | Retrieve a single memory by ID. |
+| `delete_memory` | `memory_id` | JSON (bool) | Permanently delete a memory and its embedding. |
 
 ### Plans
 
-| Tool | Parameters | Description |
-|------|------------|-------------|
-| `add_plan` | `planned_at`, `description`, `notes?` | Schedule a workout. `description` = what, `notes` = why. |
-| `get_plan` | `plan_id` | Get plan details by ID. |
-| `list_plans` | `start_date?`, `end_date?`, `status?`, `limit?` | Query plans with optional filters. |
-| `get_today_plan` | — | Get all plans scheduled for today. |
-| `get_upcoming_plans` | `days?` | Get plans for the next N days (default: 7). |
-| `update_plan` | `plan_id`, `planned_at?`, `description?`, `notes?`, `status?`, `activity_id?` | Update any plan field. Key tool for closing the feedback loop. |
-| `delete_plan` | `plan_id` | Permanently delete a plan record. |
+| Tool | Parameters | Returns | Description |
+|------|------------|---------|-------------|
+| `add_plan` | `planned_at`, `description`, `notes?` | JSON (Plan) | Schedule a workout. |
+| `get_plan` | `plan_id` | JSON (Plan) | Get plan details by ID. |
+| `list_plans` | `start_date?`, `end_date?`, `status?`, `limit?` | CSV (`id,planned_at,description,notes,status,activity_id`) | Query plans with optional filters. |
+| `get_today_plan` | — | CSV (same) | Get all plans scheduled for today. |
+| `get_upcoming_plans` | `days?` | CSV (same) | Get plans for the next N days (default: 7). |
+| `update_plan` | `plan_id`, `planned_at?`, `description?`, `notes?`, `status?`, `activity_id?` | JSON (Plan) | Update any plan field. Key tool for closing the feedback loop. |
+| `delete_plan` | `plan_id` | JSON (bool) | Permanently delete a plan record. |
 
 ## Running Tests
 

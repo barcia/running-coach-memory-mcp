@@ -1,5 +1,9 @@
 """Tests for memory tools."""
 
+import csv
+import io
+
+from memory_mcp.csv_utils import MEMORY_CSV_FIELDS, MEMORY_SEARCH_CSV_FIELDS
 from memory_mcp.tools.memory import (
     add_memory,
     delete_memory,
@@ -7,6 +11,10 @@ from memory_mcp.tools.memory import (
     list_memories,
     search_memories,
 )
+
+
+def _parse_csv(csv_output: str) -> list[list[str]]:
+    return list(csv.reader(io.StringIO(csv_output)))
 
 
 def test_add_memory(db_connection, mock_settings, mock_embedding):
@@ -38,18 +46,21 @@ def test_get_memory(db_connection, mock_settings, mock_embedding):
 
 
 def test_list_memories_by_author(db_connection, mock_settings, mock_embedding):
-    """Test listing memories filtered by author."""
+    """Test listing memories filtered by author returns CSV."""
     add_memory(db_connection, mock_settings, author="user", content="User memory")
     add_memory(db_connection, mock_settings, author="agent", content="Agent memory")
     add_memory(db_connection, mock_settings, author="system", content="System memory")
 
-    user_memories = list_memories(db_connection, author="user")
-    assert len(user_memories) == 1
-    assert user_memories[0].author == "user"
+    csv_output = list_memories(db_connection, author="user")
+    assert isinstance(csv_output, str)
+    rows = _parse_csv(csv_output)
+    assert rows[0] == MEMORY_CSV_FIELDS
+    assert len(rows) == 2  # header + 1 data row
+    assert rows[1][2] == "user"
 
 
 def test_search_memories(db_connection, mock_settings, mock_embedding):
-    """Test semantic search of memories."""
+    """Test semantic search of memories returns CSV."""
     add_memory(
         db_connection,
         mock_settings,
@@ -63,11 +74,11 @@ def test_search_memories(db_connection, mock_settings, mock_embedding):
         content="Prefiere series de velocidad los martes",
     )
 
-    # Search should return results (mocked embeddings will return same distance)
-    results = search_memories(db_connection, mock_settings, query="horario de entrenamiento", limit=5)
-
-    assert len(results) >= 1
-    assert hasattr(results[0], "distance")
+    csv_output = search_memories(db_connection, mock_settings, query="horario de entrenamiento", limit=5)
+    assert isinstance(csv_output, str)
+    rows = _parse_csv(csv_output)
+    assert rows[0] == MEMORY_SEARCH_CSV_FIELDS
+    assert len(rows) >= 2  # header + at least 1 result
 
 
 def test_delete_memory(db_connection, mock_settings, mock_embedding):
