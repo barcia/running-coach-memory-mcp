@@ -5,7 +5,7 @@ from pathlib import Path
 
 import sqlite_vec
 
-from memory_mcp.config import Settings
+from coach_memory.config import Settings
 
 
 def get_schema_sql() -> str:

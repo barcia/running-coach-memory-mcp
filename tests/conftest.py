@@ -1,4 +1,4 @@
-"""Test fixtures for Running Coach Memory MCP."""
+"""Test fixtures for Coach Memory MCP."""
 
 import os
 import tempfile
@@ -7,8 +7,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from memory_mcp.config import Settings
-from memory_mcp.database import init_database
+from coach_memory.config import Settings
+from coach_memory.database import init_database
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def mock_embedding():
     # Create a fake embedding of correct dimension
     fake_embedding = [0.1] * 3072
 
-    with patch("memory_mcp.tools.memory.get_embedding_client") as mock_client:
+    with patch("coach_memory.tools.memory.get_embedding_client") as mock_client:
         mock_openai = MagicMock()
         mock_response = MagicMock()
         mock_response.data = [MagicMock(embedding=fake_embedding)]

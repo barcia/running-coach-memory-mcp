@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Running Coach Memory MCP configuration settings."""
+    """Coach Memory MCP configuration settings."""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -17,12 +17,12 @@ class Settings(BaseSettings):
     openrouter_api_key: str
 
     # Configurable
-    database_path: str = "~/.local/share/running-coach/memory.db"
+    database_path: str = "~/.local/share/coach/memory.db"
 
     # Fixed (not exposed in .env)
     embedding_model: str = "openai/text-embedding-3-large"
     embedding_dimensions: int = 3072
-    log_path: str = "~/Library/Logs/running-coach-memory.log"
+    log_path: str = "~/Library/Logs/coach-memory.log"
 
     @property
     def db_path(self) -> Path:

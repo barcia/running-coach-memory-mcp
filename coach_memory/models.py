@@ -1,4 +1,4 @@
-"""Pydantic models for Running Coach Memory MCP."""
+"""Pydantic models for Coach Memory MCP."""
 
 from datetime import datetime, timezone
 from typing import Literal

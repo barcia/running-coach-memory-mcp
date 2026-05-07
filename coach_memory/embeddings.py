@@ -4,8 +4,8 @@ import struct
 
 from openai import OpenAI, APIError, APIConnectionError, RateLimitError
 
-from memory_mcp.config import Settings
-from memory_mcp.logging import logger
+from coach_memory.config import Settings
+from coach_memory.logging import logger
 
 
 def get_embedding_client(settings: Settings) -> OpenAI:

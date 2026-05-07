@@ -1,12 +1,12 @@
-"""Logging configuration for Running Coach Memory MCP."""
+"""Logging configuration for Coach Memory MCP."""
 
 import logging
 from logging.handlers import RotatingFileHandler
 
-from memory_mcp.config import Settings
+from coach_memory.config import Settings
 
 # Module logger
-logger = logging.getLogger("running_coach_memory")
+logger = logging.getLogger("coach_memory")
 
 
 def setup_logging(settings: Settings) -> None:

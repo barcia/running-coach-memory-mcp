@@ -4,13 +4,13 @@ import csv
 import io
 from datetime import datetime, timezone
 
-from memory_mcp.csv_utils import (
+from coach_memory.csv_utils import (
     MEMORY_CSV_FIELDS,
     MEMORY_SEARCH_CSV_FIELDS,
     PLAN_CSV_FIELDS,
     models_to_csv,
 )
-from memory_mcp.models import Memory, MemorySearchResult, Plan
+from coach_memory.models import Memory, MemorySearchResult, Plan
 
 
 def _parse_csv(csv_output: str) -> list[list[str]]:

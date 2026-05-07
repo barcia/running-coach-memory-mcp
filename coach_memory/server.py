@@ -1,19 +1,19 @@
-"""Running Coach Memory MCP Server - Entry point for FastMCP."""
+"""Coach Memory MCP Server - Entry point for FastMCP."""
 
 from typing import Literal
 
 from mcp.server.fastmcp import FastMCP
 
-from memory_mcp.config import get_settings
-from memory_mcp.database import get_connection, init_database
-from memory_mcp.logging import setup_logging
-from memory_mcp.models import (
+from coach_memory.config import get_settings
+from coach_memory.database import get_connection, init_database
+from coach_memory.logging import setup_logging
+from coach_memory.models import (
     Memory,
     Plan,
     PlanUpdate,
 )
-from memory_mcp.tools import memory as memory_tools
-from memory_mcp.tools import plan as plan_tools
+from coach_memory.tools import memory as memory_tools
+from coach_memory.tools import plan as plan_tools
 
 # Initialize settings, logging, and database
 settings = get_settings()
@@ -22,9 +22,9 @@ init_database(settings)
 
 # Create FastMCP server
 mcp = FastMCP(
-    "RunningCoachMemory",
+    "CoachMemory",
     instructions=(
-        "Persistent memory and training plan management for an AI running coach. "
+        "Persistent memory and training plan management for an AI coach. "
         "Two data domains: Plans (scheduled workouts with status lifecycle: pending → completed/skipped/cancelled) "
         "and Memory (semantic long-term storage of coaching insights, athlete observations, and decisions). "
         "Start every session with list_plans() and list_memories(limit=20) in parallel. "
@@ -245,7 +245,7 @@ def update_plan(
     """Update a plan's fields. Key tool for closing the training feedback loop.
 
     Status lifecycle: pending → completed | skipped | cancelled.
-    After a workout, mark "completed" and link the Garmin activity_id.
+    After a workout, mark "completed" and link the external activity_id.
     Mark "skipped" if the athlete didn't do it (record why in notes).
     Mark "cancelled" if the session is removed from the plan entirely.
     Only pass the fields you want to change — others remain unchanged.
@@ -256,7 +256,7 @@ def update_plan(
         description: Updated workout description
         notes: Updated rationale or post-workout observations
         status: New status — "pending", "completed", "skipped", or "cancelled"
-        activity_id: Garmin activity ID to link (set when marking completed)
+        activity_id: External activity ID to link (set when marking completed)
     """
     conn = get_connection(settings)
     try:

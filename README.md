@@ -1,27 +1,27 @@
-# Running Coach Memory MCP
+# Coach Memory MCP
 
-Persistent memory and training plan management for an AI running coach, exposed as an [MCP](https://modelcontextprotocol.io/) server.
+Persistent memory and training plan management for an AI coach, exposed as an [MCP](https://modelcontextprotocol.io/) server.
 
 Two data domains:
 
-- **Plans** — Training calendar with scheduled workouts. Each plan follows a status lifecycle (`pending` → `completed` / `skipped` / `cancelled`) and can link to external activity IDs (e.g., Garmin).
+- **Plans** — Training calendar with scheduled workouts. Each plan follows a status lifecycle (`pending` → `completed` / `skipped` / `cancelled`) and can link to external activity IDs.
 - **Memories** — Long-term semantic memory with vector embeddings (sqlite-vec) for intelligent retrieval across sessions.
 
-> This MCP does **not** store raw health metrics or biometric data. That data lives in external services (e.g., Garmin). This system acts as the coaching "brain" — what to train, why, and what to remember.
+> This MCP does **not** store raw health metrics or biometric data. That data lives in external services. This system acts as the coaching "brain" — what to train, why, and what to remember.
 
 ## Installation
 
 ### From git (recommended for MCP clients)
 
 ```bash
-uvx --from "git+ssh://git@github.com/barcia/running-coach-memory-mcp" running-coach-memory-mcp
+uvx --from "git+ssh://git@github.com/barcia/coach-memory" coach-memory
 ```
 
 ### Local development
 
 ```bash
-git clone git@github.com:barcia/running-coach-memory-mcp.git
-cd running-coach-memory-mcp
+git clone git@github.com:barcia/coach-memory.git
+cd coach-memory
 uv sync
 ```
 
@@ -33,13 +33,13 @@ Create a `.env` file (see `.env.example`):
 OPENROUTER_API_KEY=sk-or-v1-xxxx
 
 # Optional
-DATABASE_PATH=~/.local/share/running-coach/memory.db
+DATABASE_PATH=~/.local/share/coach/memory.db
 ```
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENROUTER_API_KEY` | Yes | — | OpenRouter API key for generating embeddings |
-| `DATABASE_PATH` | No | `~/.local/share/running-coach/memory.db` | SQLite database path |
+| `DATABASE_PATH` | No | `~/.local/share/coach/memory.db` | SQLite database path |
 
 Embedding model is fixed: `openai/text-embedding-3-large` (3072 dimensions) via OpenRouter.
 
@@ -50,12 +50,12 @@ Embedding model is fixed: `openai/text-embedding-3-large` (3072 dimensions) via 
 ```json
 {
   "mcpServers": {
-    "Running Coach Memory": {
+    "Coach Memory": {
       "command": "uvx",
       "args": [
         "--from",
-        "git+ssh://git@github.com/barcia/running-coach-memory-mcp",
-        "running-coach-memory-mcp"
+        "git+ssh://git@github.com/barcia/coach-memory",
+        "coach-memory"
       ],
       "env": {
         "OPENROUTER_API_KEY": "sk-or-v1-xxxx"
@@ -70,9 +70,9 @@ Embedding model is fixed: `openai/text-embedding-3-large` (3072 dimensions) via 
 ```json
 {
   "mcpServers": {
-    "Running Coach Memory": {
+    "Coach Memory": {
       "command": "uv",
-      "args": ["run", "--directory", "/path/to/running-coach-memory-mcp", "running-coach-memory-mcp"],
+      "args": ["run", "--directory", "/path/to/coach-memory", "coach-memory"],
       "env": {
         "OPENROUTER_API_KEY": "sk-or-v1-xxxx"
       }
@@ -84,7 +84,7 @@ Embedding model is fixed: `openai/text-embedding-3-large` (3072 dimensions) via 
 ### MCP Inspector
 
 ```bash
-npx @modelcontextprotocol/inspector uv run running-coach-memory-mcp
+npx @modelcontextprotocol/inspector uv run coach-memory
 ```
 
 ## Available Tools

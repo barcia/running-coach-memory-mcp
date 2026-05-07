@@ -4,9 +4,9 @@ import csv
 import io
 from datetime import date
 
-from memory_mcp.csv_utils import PLAN_CSV_FIELDS
-from memory_mcp.models import PlanUpdate
-from memory_mcp.tools.plan import (
+from coach_memory.csv_utils import PLAN_CSV_FIELDS
+from coach_memory.models import PlanUpdate
+from coach_memory.tools.plan import (
     add_plan,
     delete_plan,
     get_plan,

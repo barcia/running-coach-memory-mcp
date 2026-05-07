@@ -3,10 +3,10 @@
 import sqlite3
 from typing import Literal
 
-from memory_mcp.config import Settings
-from memory_mcp.csv_utils import MEMORY_CSV_FIELDS, MEMORY_SEARCH_CSV_FIELDS, models_to_csv
-from memory_mcp.embeddings import create_embedding, get_embedding_client, serialize_embedding
-from memory_mcp.models import Memory, MemorySearchResult
+from coach_memory.config import Settings
+from coach_memory.csv_utils import MEMORY_CSV_FIELDS, MEMORY_SEARCH_CSV_FIELDS, models_to_csv
+from coach_memory.embeddings import create_embedding, get_embedding_client, serialize_embedding
+from coach_memory.models import Memory, MemorySearchResult
 
 
 def add_memory(

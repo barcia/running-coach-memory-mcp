@@ -1,4 +1,4 @@
--- Running Coach Memory MCP - Database Schema
+-- Coach Memory MCP - Database Schema
 -- Memory and Training Plan management
 
 -- plan: Bridge to external execution (links to external activity IDs)
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS plan (
     description TEXT NOT NULL,      -- The workout: clear, concise and direct
     notes TEXT,                     -- The why: explanation, context or justification
     status TEXT DEFAULT 'pending',  -- pending, completed, skipped, cancelled
-    activity_id TEXT                -- External ID (e.g., Garmin Activity ID)
+    activity_id TEXT                -- External activity ID
 );
 
 -- memory: Central memory with vector search

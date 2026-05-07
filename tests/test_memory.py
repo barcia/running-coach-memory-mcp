@@ -3,8 +3,8 @@
 import csv
 import io
 
-from memory_mcp.csv_utils import MEMORY_CSV_FIELDS, MEMORY_SEARCH_CSV_FIELDS
-from memory_mcp.tools.memory import (
+from coach_memory.csv_utils import MEMORY_CSV_FIELDS, MEMORY_SEARCH_CSV_FIELDS
+from coach_memory.tools.memory import (
     add_memory,
     delete_memory,
     get_memory,

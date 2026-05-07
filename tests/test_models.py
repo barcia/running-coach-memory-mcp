@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from memory_mcp.models import Memory, Plan
+from coach_memory.models import Memory, Plan
 
 RFC3339_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$")
 

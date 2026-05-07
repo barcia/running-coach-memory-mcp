@@ -3,8 +3,8 @@
 import sqlite3
 from datetime import date, timedelta
 
-from memory_mcp.csv_utils import PLAN_CSV_FIELDS, models_to_csv
-from memory_mcp.models import Plan, PlanUpdate
+from coach_memory.csv_utils import PLAN_CSV_FIELDS, models_to_csv
+from coach_memory.models import Plan, PlanUpdate
 
 
 def add_plan(
